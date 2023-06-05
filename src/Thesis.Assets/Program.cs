@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Thesis.Assets;
 using Thesis.Assets.Options;
+using Thesis.Assets.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(conn
 
 builder.Services.AddOptions<IntegrationOptions>()
        .Bind(builder.Configuration.GetSection("IntegrationOptions"));
+
+builder.Services.AddHostedService<AssetsUpdateService>();
 
 var app = builder.Build();
 
