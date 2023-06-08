@@ -43,7 +43,6 @@ public sealed class DatabaseContext : DbContext
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.IntegrationId).IsUnique();
             entity.Property(e => e.Name).IsRequired();
             entity.Property(e => e.AreaId).IsRequired();
             
@@ -53,7 +52,6 @@ public sealed class DatabaseContext : DbContext
         modelBuilder.Entity<Asset>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.IntegrationId).IsUnique();
             entity.Property(e => e.Name).IsRequired();
             entity.Property(e => e.AreaId).IsRequired();
             entity.Property(e => e.CategoryId).IsRequired();

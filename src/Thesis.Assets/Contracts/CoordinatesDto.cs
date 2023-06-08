@@ -14,9 +14,4 @@ public class CoordinatesDto
     /// Долгота
     /// </summary>
     public double Lng { get; set; }
-    
-    /// <summary>
-    /// ?
-    /// </summary>
-    public double Alt { get; set; }
 }

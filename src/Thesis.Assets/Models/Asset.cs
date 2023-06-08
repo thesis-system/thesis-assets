@@ -9,12 +9,7 @@ public class Asset
     /// Идентификатор актива
     /// </summary>
     public Guid Id { get; set; }
-    
-    /// <summary>
-    /// Интеграционный идентификатор актива
-    /// </summary>
-    public Guid IntegrationId { get; set; }
-    
+
     /// <summary>
     /// Название актива
     /// </summary>

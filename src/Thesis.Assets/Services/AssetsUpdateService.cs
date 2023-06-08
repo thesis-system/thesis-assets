@@ -69,8 +69,7 @@ public class AssetsUpdateService : IHostedService
                 .Where(category => integrationOptions.Value.Categories.Contains(category.Name))
                 .Select(category => new Category
                 {
-                    Id = Guid.NewGuid(),
-                    IntegrationId = category.Id,
+                    Id = category.Id,
                     Name = category.Name,
                     AreaId = category.AreaId
                 }).ToList();
@@ -81,14 +80,13 @@ public class AssetsUpdateService : IHostedService
 
             var updatedCategories = context.Categories.ToList();
             var assets = response
-                .Where(asset => updatedCategories.Any(category => category.IntegrationId == asset.Category.Id))
+                .Where(asset => updatedCategories.Any(category => category.Id == asset.Category.Id))
                 .Select(asset => new Asset
                 {
-                    Id = Guid.NewGuid(),
-                    IntegrationId = asset.Id,
+                    Id = asset.Id,
                     Name = asset.Name,
                     AreaId = asset.AreaId,
-                    CategoryId = updatedCategories.First(category => category.IntegrationId == asset.Category.Id).Id,
+                    CategoryId = updatedCategories.First(category => category.Id == asset.Category.Id).Id,
                     Parents = asset.Parents
                 }).ToList();
         
@@ -106,13 +104,13 @@ public class AssetsUpdateService : IHostedService
 
     private static async Task UpdateCategories(IReadOnlyCollection<Category> categories, DatabaseContext context)
     {
-        var categoriesIds = categories.Select(category => category.IntegrationId).ToList();
-        var categoriesIdsFromDb = context.Categories.Select(category => category.IntegrationId).ToList();
+        var categoriesIds = categories.Select(category => category.Id).ToList();
+        var categoriesIdsFromDb = context.Categories.Select(category => category.Id).ToList();
         
         var categoriesIdsToCreate = categoriesIds.Except(categoriesIdsFromDb).ToList();
         if (categoriesIdsToCreate.Any())
         {
-            var categoriesToCreate = categories.Where(category => categoriesIdsToCreate.Contains(category.IntegrationId)).ToList();
+            var categoriesToCreate = categories.Where(category => categoriesIdsToCreate.Contains(category.Id)).ToList();
             context.Categories.AddRange(categoriesToCreate);
             await context.SaveChangesAsync();
         }
@@ -120,7 +118,7 @@ public class AssetsUpdateService : IHostedService
         var categoriesIdsToDelete = categoriesIdsFromDb.Except(categoriesIds).ToList();
         if (categoriesIdsToDelete.Any())
         {
-            var categoriesToDelete = context.Categories.Where(category => categoriesIdsToDelete.Contains(category.IntegrationId)).ToList();
+            var categoriesToDelete = context.Categories.Where(category => categoriesIdsToDelete.Contains(category.Id)).ToList();
             context.Categories.RemoveRange(categoriesToDelete);
             await context.SaveChangesAsync();
         }
@@ -129,15 +127,15 @@ public class AssetsUpdateService : IHostedService
         if (categoriesIdsToUpdate.Any())
         {
             var categoriesToUpdateById = categories
-                .Where(category => categoriesIdsToUpdate.Contains(category.IntegrationId))
-                .ToDictionary(category => category.IntegrationId);
+                .Where(category => categoriesIdsToUpdate.Contains(category.Id))
+                .ToDictionary(category => category.Id);
             var categoriesToUpdateFromDb = context.Categories
-                .Where(category => categoriesIdsToUpdate.Contains(category.IntegrationId))
+                .Where(category => categoriesIdsToUpdate.Contains(category.Id))
                 .ToList();
 
             foreach (var category in categoriesToUpdateFromDb)
             {
-                var categoryToUpdate = categoriesToUpdateById[category.IntegrationId];
+                var categoryToUpdate = categoriesToUpdateById[category.Id];
                 category.Name = categoryToUpdate.Name;
                 category.AreaId = categoryToUpdate.AreaId;
             }
@@ -149,13 +147,13 @@ public class AssetsUpdateService : IHostedService
     
     private static async Task UpdateAssets(IReadOnlyCollection<Asset> assets, DatabaseContext context)
     {
-        var assetsIds = assets.Select(asset => asset.IntegrationId).ToList();
-        var assetsIdsFromDb = context.Assets.Select(asset => asset.IntegrationId).ToList();
+        var assetsIds = assets.Select(asset => asset.Id).ToList();
+        var assetsIdsFromDb = context.Assets.Select(asset => asset.Id).ToList();
         
         var assetsIdsToCreate = assetsIds.Except(assetsIdsFromDb).ToList();
         if (assetsIdsToCreate.Any())
         {
-            var assetsToCreate = assets.Where(asset => assetsIdsToCreate.Contains(asset.IntegrationId)).ToList();
+            var assetsToCreate = assets.Where(asset => assetsIdsToCreate.Contains(asset.Id)).ToList();
             context.Assets.AddRange(assetsToCreate);
             await context.SaveChangesAsync();
         }
@@ -163,7 +161,7 @@ public class AssetsUpdateService : IHostedService
         var assetsIdsToDelete = assetsIdsFromDb.Except(assetsIds).ToList();
         if (assetsIdsToDelete.Any())
         {
-            var assetsToDelete = context.Assets.Where(asset => assetsIdsToDelete.Contains(asset.IntegrationId)).ToList();
+            var assetsToDelete = context.Assets.Where(asset => assetsIdsToDelete.Contains(asset.Id)).ToList();
             context.Assets.RemoveRange(assetsToDelete);
             await context.SaveChangesAsync();
         }
@@ -172,15 +170,15 @@ public class AssetsUpdateService : IHostedService
         if (assetsIdsToUpdate.Any())
         {
             var assetsToUpdateById = assets
-                .Where(asset => assetsIdsToUpdate.Contains(asset.IntegrationId))
-                .ToDictionary(asset => asset.IntegrationId);
+                .Where(asset => assetsIdsToUpdate.Contains(asset.Id))
+                .ToDictionary(asset => asset.Id);
             var assetsToUpdateFromDb = context.Assets
-                .Where(asset => assetsIdsToUpdate.Contains(asset.IntegrationId))
+                .Where(asset => assetsIdsToUpdate.Contains(asset.Id))
                 .ToList();
 
             foreach (var asset in assetsToUpdateFromDb)
             {
-                var assetToUpdate = assetsToUpdateById[asset.IntegrationId];
+                var assetToUpdate = assetsToUpdateById[asset.Id];
                 asset.Name = assetToUpdate.Name;
                 asset.AreaId = assetToUpdate.AreaId;
                 asset.CategoryId = assetToUpdate.CategoryId;

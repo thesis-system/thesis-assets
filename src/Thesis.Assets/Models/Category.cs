@@ -9,12 +9,7 @@ public class Category
     /// Идентификатор категории актива
     /// </summary>
     public Guid Id { get; set; }
-    
-    /// <summary>
-    /// Интеграционный идентификатор категории актива
-    /// </summary>
-    public Guid IntegrationId { get; set; }
-    
+
     /// <summary>
     /// Название категории актива
     /// </summary>

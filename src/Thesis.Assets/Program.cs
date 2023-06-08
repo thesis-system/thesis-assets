@@ -20,7 +20,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(conn
 builder.Services.AddOptions<IntegrationOptions>()
        .Bind(builder.Configuration.GetSection("IntegrationOptions"));
 
-builder.Services.AddHostedService<AssetsUpdateService>();
+//builder.Services.AddHostedService<AssetsUpdateService>();
 
 var app = builder.Build();
 
