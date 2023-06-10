@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Thesis.Assets.Contracts;
 using Thesis.Assets.Models;
 
 namespace Thesis.Assets.Controllers;
@@ -22,10 +23,45 @@ public class AssetsController : ControllerBase
         _context = context;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetStructureByApartments(ICollection<Guid> apartments)
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetAssetInfo(Guid id)
     {
-        if (!apartments.Any()) return BadRequest();
+        var asset = await _context.Assets
+            .Include(asset => asset.Category)
+            .FirstOrDefaultAsync(asset => asset.Id == id);
+        
+        if (asset == null) return NotFound("Актив не найден");
+        
+        var assetDto = new AssetDto
+        {
+            Id = asset.Id,
+            Name = asset.Name,
+            AreaId = asset.AreaId,
+            Parents = asset.Parents,
+            Category = new CategoryDto
+            {
+                Id = asset.Category.Id,
+                Name = asset.Category.Name,
+                AreaId = asset.Category.AreaId
+            },
+            Latitude = asset.Latitude,
+            Longitude = asset.Longitude
+        };
+        return Ok(assetDto);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetStructureByApartments([FromQuery] ICollection<Guid> apartments)
+    {
+        if (!apartments.Any()) return BadRequest("Не указаны идентификаторы квартир");
+        apartments = apartments.Distinct().ToList();
+        
+        var notFoundApartments = apartments
+            .Where(apartment => !_context.Assets.Any(asset => asset.Id == apartment && asset.Category.Name == "Квартира"))
+            .ToList();
+
+        if (notFoundApartments.Any())
+            return BadRequest($"Не найдены квартиры с идентификаторами: {string.Join(", ", notFoundApartments)}"); 
         
         var assetById = await _context.Assets
             .ToDictionaryAsync(asset => asset.Id, asset => asset);
@@ -41,10 +77,9 @@ public class AssetsController : ControllerBase
             .ToListAsync();
         foreach (var complex in complexes)
         {
-            var complex1 = complex;
             var complexGrounds = _context.Assets
                 .Include(asset => asset.Category)
-                .Where(asset => asset.Parents.Contains(complex1.Id) && groundsCategoryIds.Contains(asset.CategoryId))
+                .Where(asset => asset.Parents.Contains(complex.Id) && groundsCategoryIds.Contains(asset.CategoryId))
                 .ToList();
             
             complex.Children.AddRange(complexGrounds.Select(ground => new Node

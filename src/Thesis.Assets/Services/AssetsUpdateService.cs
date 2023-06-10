@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Options;
-using Thesis.Assets.Contracts;
 using Thesis.Assets.Models;
 using Thesis.Assets.Options;
 
@@ -188,6 +187,52 @@ public class AssetsUpdateService : IHostedService
             context.Assets.UpdateRange(assetsToUpdateFromDb);
             await context.SaveChangesAsync();
         }
+    }
+
+    #endregion
+
+    #region Classes
+
+    private class AssetDto
+    {
+        public Guid Id { get; set; }
+    
+        public string Name { get; set; } = string.Empty;
+    
+        public Guid AreaId { get; set; }
+
+        public List<Guid> Parents { get; set; } = new();
+
+        public CategoryDto Category { get; set; } = null!;
+    
+        public List<AssetParameterDto> Parameters { get; set; } = new();
+    }
+    
+    private class AssetParameterDto
+    {
+        public Guid Id { get; set; }
+    
+        public string Name { get; set; } = string.Empty;
+    
+        public CoordinatesDto Coordinates { get; set; } = null!;
+    }
+    
+    private class CategoryDto
+    {
+        public Guid Id { get; set; }
+    
+        public string Name { get; set; } = string.Empty;
+    
+        public Guid AreaId { get; set; }
+    
+        public List<Guid> Parents { get; set; } = new();
+    }
+    
+    private class CoordinatesDto
+    {
+        public double Lat { get; set; }
+    
+        public double Lng { get; set; }
     }
 
     #endregion

@@ -31,7 +31,12 @@ public class AssetDto
     public CategoryDto Category { get; set; } = null!;
     
     /// <summary>
-    /// Параметры актива
+    /// Широта
     /// </summary>
-    public List<AssetParameterDto> Parameters { get; set; } = new();
+    public double Latitude { get; set; }
+    
+    /// <summary>
+    /// Долгота
+    /// </summary>
+    public double Longitude { get; set; }
 }

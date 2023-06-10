@@ -56,6 +56,8 @@ public sealed class DatabaseContext : DbContext
             entity.Property(e => e.AreaId).IsRequired();
             entity.Property(e => e.CategoryId).IsRequired();
             entity.Property(e => e.Parents).IsRequired();
+            entity.Property(e => e.Latitude).IsRequired();
+            entity.Property(e => e.Longitude).IsRequired();
             
             entity.HasOne(e => e.Category).WithMany(e => e.Assets).HasForeignKey(e => e.CategoryId);
         });
