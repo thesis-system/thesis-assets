@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Thesis.Assets.Contracts;
@@ -10,6 +11,7 @@ namespace Thesis.Assets.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class AssetsController : ControllerBase
 {
     private readonly DatabaseContext _context;

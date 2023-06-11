@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Seljmov.AspNet.Commons.Helpers;
 using Thesis.Assets;
 using Thesis.Assets.Options;
 using Thesis.Assets.Services;
@@ -20,18 +21,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(conn
 builder.Services.AddOptions<IntegrationOptions>()
        .Bind(builder.Configuration.GetSection("IntegrationOptions"));
 
-//builder.Services.AddHostedService<AssetsUpdateService>();
+builder.Services.AddHostedService<AssetsUpdateService>();
 
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-
+var app = builder.BuildWebApplication();
 app.Run();
